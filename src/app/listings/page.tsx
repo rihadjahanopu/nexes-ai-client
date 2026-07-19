@@ -58,7 +58,7 @@ export default function ExplorePage() {
       const query = searchQuery.toLowerCase();
       result = result.filter(item =>
         item.title.toLowerCase().includes(query) ||
-        item.location.toLowerCase().includes(query)
+        item.location?.toLowerCase().includes(query)
       );
     }
 
