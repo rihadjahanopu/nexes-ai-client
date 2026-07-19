@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Moon, Sun, Sparkles, LayoutDashboard, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { Moon, Sun, Sparkles, LayoutDashboard, LogOut, Settings, ChevronDown, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
@@ -15,6 +15,7 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
 
@@ -46,13 +47,13 @@ export function Navbar() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
-        className={`w-full max-w-[1200px] rounded-full border transition-all duration-300 ease-out shadow-lg
+        className={`w-full max-w-[1200px] rounded-full border transition-all duration-300 ease-out shadow-lg relative
           ${isScrolled
             ? 'bg-background/70 backdrop-blur-xl border-primary/20 py-2'
             : 'bg-background/40 backdrop-blur-md border-border/50 py-3'
           }`}
       >
-        <div className="flex items-center justify-between px-6">
+        <div className="flex items-center justify-between px-4 sm:px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 group">
             <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
@@ -80,13 +81,13 @@ export function Navbar() {
           </div>
 
           {/* Right Side */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {mounted && (
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="rounded-full h-9 w-9 bg-background/50 hover:bg-primary/10"
+                className="rounded-full h-9 w-9 bg-background/50 hover:bg-primary/10 shrink-0"
               >
                 {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </Button>
@@ -158,12 +159,48 @@ export function Navbar() {
                   <Button variant="ghost" className="rounded-full h-9 px-4 hidden sm:flex hover:bg-primary/10">Login</Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="rounded-full h-9 px-5 shadow-primary/20 shadow-md">Get Started</Button>
+                  <Button className="rounded-full h-9 px-4 sm:px-5 shadow-primary/20 shadow-md text-sm">Get Started</Button>
                 </Link>
               </>
             )}
+
+            {/* Mobile Menu Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden h-9 w-9 rounded-full shrink-0 hover:bg-primary/10"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
           </div>
         </div>
+
+        {/* Mobile Menu Dropdown */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden absolute top-full left-0 right-0 mt-3 p-4 bg-background/95 backdrop-blur-2xl border border-border/50 rounded-3xl shadow-2xl flex flex-col gap-2 origin-top"
+            >
+              <Link href="/#features" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors">Features</Link>
+              <Link href="/#how-it-works" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors">How it Works</Link>
+              <Link href="/#testimonials" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors">Testimonials</Link>
+              <Link href="/#faq" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors">FAQ</Link>
+              
+              {!user && (
+                <div className="flex flex-col gap-3 pt-3 mt-1 border-t border-border/50 sm:hidden">
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="outline" className="w-full rounded-xl h-11 border-primary/20">Login</Button>
+                  </Link>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
     </div>
   );
