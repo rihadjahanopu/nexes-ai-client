@@ -16,7 +16,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative overflow-hidden min-h-[90vh] flex flex-col items-center justify-center pt-24 pb-20">
+        <section className="relative overflow-hidden min-h-[90vh] flex flex-col items-center justify-center pt-24 pb-20 max-w-full">
           <div className="container mx-auto px-4 text-center z-10 relative">
             <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-sm font-medium tracking-wide">
               ✨ The Future of Productivity is Here
@@ -30,24 +30,26 @@ export default function Home() {
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed">
               Nexus doesn't just manage your tasks—it executes them. Combine project management with agentic AI to analyze data, draft strategies, and automate workflows.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/register">
-                <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/25 hover:scale-105 transition-transform">
+            <div className="flex flex-col sm:flex-row justify-center gap-4 px-4">
+              <Link href="/register" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/25 hover:scale-105 transition-transform">
                   Start for free <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="/login">
-                <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full bg-background/50 backdrop-blur hover:bg-muted">
+              <Link href="/login" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full bg-background/50 backdrop-blur hover:bg-muted">
                   View Demo
                 </Button>
               </Link>
             </div>
           </div>
-          
-          {/* Abstract Background Effects */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-30 pointer-events-none -z-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob" />
-            <div className="absolute inset-0 bg-gradient-to-l from-purple-500 to-pink-500 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-2000 opacity-70" />
+
+          {/* Abstract Background Effects — clipped by section overflow-hidden */}
+          <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] md:w-[800px] md:h-[800px] opacity-30">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-screen animate-blob" />
+              <div className="absolute inset-0 bg-gradient-to-l from-purple-500 to-pink-500 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-2000 opacity-70" />
+            </div>
           </div>
         </section>
 
