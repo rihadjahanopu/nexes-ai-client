@@ -266,6 +266,20 @@ export default function ProjectDetailPage() {
         
         {/* Left Panel: Project Details */}
         <div className={`w-full md:w-1/3 flex-col gap-4 overflow-y-auto pb-4 min-h-0 ${showMobileSidebar ? 'flex' : 'hidden md:flex'}`}>
+          
+          {/* Mobile-only Back to Chat bar */}
+          <div className="md:hidden flex items-center gap-3 sticky top-0 z-10 bg-background/95 backdrop-blur border-b px-1 py-2 -mx-1 shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2 font-medium text-primary hover:text-primary hover:bg-primary/10"
+              onClick={() => setShowMobileSidebar(false)}
+            >
+              <X className="h-4 w-4" />
+              Back to Chat
+            </Button>
+          </div>
+
           <Card className="relative overflow-hidden shrink-0">
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start gap-2 w-full">
@@ -303,9 +317,6 @@ export default function ProjectDetailPage() {
                       </Button>
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={handleDelete}>
                         <Trash2 className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={() => setShowMobileSidebar(false)}>
-                        <X className="h-5 w-5" />
                       </Button>
                     </>
                   )}
