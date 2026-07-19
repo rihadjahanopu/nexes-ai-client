@@ -6,6 +6,10 @@
 
 <br/><br/>
 
+## Nexes Live Demo
+
+[Nexes AI Website](https://nexes-ai-client.vercel.app/)
+
 <h1>🧠 Nexus AI — Client</h1>
 
 <p><strong>A next-generation Agentic AI project management interface built with Next.js 15, React 19, and TypeScript.</strong><br/>
@@ -44,6 +48,7 @@ Dark-mode-first, blazing fast, and powered by Gemini AI under the hood.</p>
 **Nexus AI Client** is the frontend layer of the Nexus AI platform — an intelligent project workspace that combines modern project management with an embedded **Agentic AI chat interface** powered by Google Gemini.
 
 Key highlights:
+
 - ⚡ **Turbopack-powered** development with instant HMR
 - 🌙 **Dark/Light mode** with seamless system preference detection
 - 🤖 **AI Chat Interface** with real-time Markdown rendering per project
@@ -56,24 +61,24 @@ Key highlights:
 
 ## 🛠️ Tech Stack
 
-| Category | Technology | Version |
-|---|---|---|
-| **Framework** | Next.js (App Router) | `15.5.20` |
-| **UI Library** | React | `19.1.0` |
-| **Language** | TypeScript | `^5` |
-| **Styling** | Tailwind CSS v4 + shadcn/ui | `^4` |
-| **Animations** | Framer Motion | `^12` |
-| **Data Fetching** | TanStack Query (React Query) | `^5` |
-| **HTTP Client** | Axios | `^1.18` |
-| **Forms** | React Hook Form + Zod | `^7` / `^4` |
-| **Charts** | Recharts | `^3` |
-| **Icons** | Lucide React | `^1.25` |
-| **Theme** | next-themes | `^0.4` |
-| **Auth** | @react-oauth/google | `^0.13` |
-| **File Upload** | React Dropzone | `^19` |
-| **Notifications** | React Hot Toast | `^2.6` |
-| **Markdown** | React Markdown | `^10` |
-| **Top Loader** | nextjs-toploader | `^3.9` |
+| Category          | Technology                   | Version     |
+| ----------------- | ---------------------------- | ----------- |
+| **Framework**     | Next.js (App Router)         | `15.5.20`   |
+| **UI Library**    | React                        | `19.1.0`    |
+| **Language**      | TypeScript                   | `^5`        |
+| **Styling**       | Tailwind CSS v4 + shadcn/ui  | `^4`        |
+| **Animations**    | Framer Motion                | `^12`       |
+| **Data Fetching** | TanStack Query (React Query) | `^5`        |
+| **HTTP Client**   | Axios                        | `^1.18`     |
+| **Forms**         | React Hook Form + Zod        | `^7` / `^4` |
+| **Charts**        | Recharts                     | `^3`        |
+| **Icons**         | Lucide React                 | `^1.25`     |
+| **Theme**         | next-themes                  | `^0.4`      |
+| **Auth**          | @react-oauth/google          | `^0.13`     |
+| **File Upload**   | React Dropzone               | `^19`       |
+| **Notifications** | React Hot Toast              | `^2.6`      |
+| **Markdown**      | React Markdown               | `^10`       |
+| **Top Loader**    | nextjs-toploader             | `^3.9`      |
 
 ---
 
@@ -126,16 +131,16 @@ nexus-ai-client/
 
 ## 🗺️ Pages & Routes
 
-| Route | Description | Auth Required |
-|---|---|:---:|
-| `/` | Landing page — Hero, Features, Testimonials, CTA | ❌ |
-| `/login` | Login with email/password or Google OAuth | ❌ |
-| `/register` | Create a new user account | ❌ |
-| `/dashboard` | Stats overview, animated charts, recent projects | ✅ |
-| `/profile` | Manage user profile and settings | ✅ |
-| `/projects` | Browse all projects with search, filter, pagination | ✅ |
-| `/projects/new` | Create a new project workspace | ✅ |
-| `/projects/[id]` | Project workspace + embedded AI Agent chat | ✅ |
+| Route            | Description                                         | Auth Required |
+| ---------------- | --------------------------------------------------- | :-----------: |
+| `/`              | Landing page — Hero, Features, Testimonials, CTA    |      ❌       |
+| `/login`         | Login with email/password or Google OAuth           |      ❌       |
+| `/register`      | Create a new user account                           |      ❌       |
+| `/dashboard`     | Stats overview, animated charts, recent projects    |      ✅       |
+| `/profile`       | Manage user profile and settings                    |      ✅       |
+| `/projects`      | Browse all projects with search, filter, pagination |      ✅       |
+| `/projects/new`  | Create a new project workspace                      |      ✅       |
+| `/projects/[id]` | Project workspace + embedded AI Agent chat          |      ✅       |
 
 > 🔐 Protected routes redirect to `/login` if the user is not authenticated.
 
@@ -144,14 +149,17 @@ nexus-ai-client/
 ## 🎨 Design System
 
 ### Color & Theme
+
 - **CSS Variables** from shadcn/ui — supports both Light & Dark mode seamlessly
 - **Dark-first** design philosophy with `next-themes` system preference detection
 
 ### Typography
+
 - **Geist Sans** — loaded via `next/font/google` for optimal performance
 - Consistent type scale from `text-sm` to `text-6xl`
 
 ### Components & Patterns
+
 - **Glassmorphism** — applied on the hero section, overlays, and modals
 - **Rounded-2xl** cards — consistent border-radius across all card components
 - **Framer Motion** — smooth page transitions, stagger animations, and micro-interactions
@@ -159,13 +167,13 @@ nexus-ai-client/
 
 ### Responsive Breakpoints
 
-| Breakpoint | Width |
-|---|---|
-| `sm` | ≥ 640px |
-| `md` | ≥ 768px |
-| `lg` | ≥ 1024px |
-| `xl` | ≥ 1280px |
-| `2xl` | ≥ 1536px |
+| Breakpoint | Width    |
+| ---------- | -------- |
+| `sm`       | ≥ 640px  |
+| `md`       | ≥ 768px  |
+| `lg`       | ≥ 1024px |
+| `xl`       | ≥ 1280px |
+| `2xl`      | ≥ 1536px |
 
 ---
 
@@ -220,21 +228,21 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. Changes are
 
 ## 🔑 Environment Variables
 
-| Variable | Description | Required |
-|---|---|:---:|
-| `NEXT_PUBLIC_API_URL` | Backend API base URL (e.g. `http://localhost:5000/api/v1`) | ✅ |
-| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Google OAuth 2.0 Client ID for social login | ⚠️ Optional |
+| Variable                       | Description                                                |  Required   |
+| ------------------------------ | ---------------------------------------------------------- | :---------: |
+| `NEXT_PUBLIC_API_URL`          | Backend API base URL (e.g. `http://localhost:5000/api/v1`) |     ✅      |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Google OAuth 2.0 Client ID for social login                | ⚠️ Optional |
 
 ---
 
 ## 📜 Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start development server with Turbopack |
+| Command         | Description                                   |
+| --------------- | --------------------------------------------- |
+| `npm run dev`   | Start development server with Turbopack       |
 | `npm run build` | Build optimized production bundle (Turbopack) |
-| `npm start` | Start the production server |
-| `npm run lint` | Run ESLint across the codebase |
+| `npm start`     | Start the production server                   |
+| `npm run lint`  | Run ESLint across the codebase                |
 
 ---
 
