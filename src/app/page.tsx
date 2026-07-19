@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { HeroSection } from "@/components/home/HeroSection";
-import { LogosSection } from "@/components/home/LogosSection";
+import { AudienceSection } from "@/components/home/AudienceSection";
+import { CtaSection } from "@/components/home/CtaSection";
+import { FaqSection } from "@/components/home/FaqSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
+import { HeroSection } from "@/components/home/HeroSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { LogosSection } from "@/components/home/LogosSection";
+import { NewsletterSection } from "@/components/home/NewsletterSection";
+import { PricingSection } from "@/components/home/PricingSection";
+import { ResourcesSection } from "@/components/home/ResourcesSection";
+import { SecuritySection } from "@/components/home/SecuritySection";
 import { StatisticsSection } from "@/components/home/StatisticsSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
-import { PricingSection } from "@/components/home/PricingSection";
-import { AudienceSection } from "@/components/home/AudienceSection";
-import { SecuritySection } from "@/components/home/SecuritySection";
-import { ResourcesSection } from "@/components/home/ResourcesSection";
-import { FaqSection } from "@/components/home/FaqSection";
-import { NewsletterSection } from "@/components/home/NewsletterSection";
-import { CtaSection } from "@/components/home/CtaSection";
+import { Footer } from "@/components/layout/Footer";
+import { Navbar } from "@/components/layout/Navbar";
 
 export default function Home() {
 	return (

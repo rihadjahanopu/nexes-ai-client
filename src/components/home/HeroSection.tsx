@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export function HeroSection() {
 	return (
-		<section className="relative overflow-hidden isolate min-h-[90vh] flex flex-col items-center justify-center pt-24 pb-20 w-full">
+		<section className="relative overflow-hidden isolate min-h-[90vh] flex flex-col items-center justify-center pt-32 sm:pt-40 pb-20 w-full">
 			<motion.div 
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -17,7 +17,7 @@ export function HeroSection() {
 				<div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-sm font-medium tracking-wide">
 					✨ The Future of Productivity is Here
 				</div>
-				<h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+				<h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
 					Your Autonomous <br />
 					<span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-500 to-purple-500">
 						Workspace Copilot

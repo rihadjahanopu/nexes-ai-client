@@ -46,17 +46,17 @@ export function Navbar() {
       <nav
         className={`w-full max-w-[1200px] rounded-full border transition-all duration-300 ease-out shadow-lg relative
           ${isScrolled
-            ? 'bg-background/70 backdrop-blur-xl border-primary/20 py-2'
-            : 'bg-background/40 backdrop-blur-md border-border/50 py-2 sm:py-3'
+            ? 'bg-background/70 backdrop-blur-xl border-primary/20 py-2.5 sm:py-3'
+            : 'bg-background/40 backdrop-blur-md border-border/50 py-3.5 sm:py-4'
           }`}
       >
         <div className="flex items-center justify-between px-3 sm:px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-1 sm:space-x-2 group shrink-0">
-            <div className="h-7 w-7 sm:h-8 sm:w-8 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform shrink-0">
-              <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform shrink-0">
+              <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             </div>
-            <span className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500 tracking-tight">
+            <span className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500 tracking-tight">
               Nexus
             </span>
           </Link>
@@ -84,9 +84,9 @@ export function Navbar() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="rounded-full h-8 w-8 sm:h-9 sm:w-9 bg-background/50 hover:bg-primary/10 shrink-0"
+                className="rounded-full h-9 w-9 sm:h-10 sm:w-10 bg-background/50 hover:bg-primary/10 shrink-0"
               >
-                {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
             )}
 
@@ -94,9 +94,9 @@ export function Navbar() {
               <div className="relative shrink-0" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(prev => !prev)}
-                  className="flex items-center gap-1 sm:gap-2 rounded-full pl-1 pr-2 sm:pr-3 py-1 bg-background/50 hover:bg-primary/10 border border-border/50 hover:border-primary/30 transition-all duration-200"
+                  className="flex items-center gap-1 sm:gap-2 rounded-full pl-1.5 pr-2 sm:pr-3 py-1.5 bg-background/50 hover:bg-primary/10 border border-border/50 hover:border-primary/30 transition-all duration-200"
                 >
-                  <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-full overflow-hidden bg-primary/20 flex items-center justify-center text-primary text-xs font-bold border border-primary/30 shrink-0">
+                  <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full overflow-hidden bg-primary/20 flex items-center justify-center text-primary text-xs font-bold border border-primary/30 shrink-0">
                     {user.avatar ? (
                       <Image src={user.avatar} alt={user.name} width={28} height={28} className="object-cover w-full h-full" />
                     ) : (
@@ -165,10 +165,10 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden h-8 w-8 sm:h-10 sm:w-10 rounded-full shrink-0 hover:bg-primary/10"
+              className="lg:hidden h-9 w-9 sm:h-10 sm:w-10 rounded-full shrink-0 hover:bg-primary/10"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <Menu className="h-5 w-5 sm:h-6 sm:w-6" />}
+              {mobileMenuOpen ? <X className="h-6 w-6 sm:h-6 sm:w-6" /> : <Menu className="h-6 w-6 sm:h-6 sm:w-6" />}
             </Button>
           </div>
         </div>
