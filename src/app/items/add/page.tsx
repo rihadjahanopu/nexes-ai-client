@@ -9,9 +9,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, Plus, UploadCloud, X, Image as ImageIcon } from 'lucide-react';
+import { Loader2, UploadCloud, X, Plus, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
+
+const CATEGORIES = ['Apartment', 'House', 'Villa', 'Cabin', 'Hotel', 'Studio', 'Other'];
+
+interface Spec {
+  label: string;
+  value: string;
+}
 
 export default function AddItemPage() {
   const { user, loading: authLoading } = useAuth();
@@ -26,52 +33,98 @@ export default function AddItemPage() {
   }, [user, authLoading, router]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     title: '',
     shortDescription: '',
     fullDescription: '',
     price: '',
+    location: '',
+    category: 'Other',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const [specs, setSpecs] = useState<Spec[]>([
+    { label: 'Guests', value: '' },
+    { label: 'Bedrooms', value: '' },
+    { label: 'Bathrooms', value: '' },
+    { label: 'Area', value: '' },
+  ]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleImageFile = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select a valid image file.');
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be smaller than 5MB.');
-      return;
-    }
-    setImageFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => setImagePreview(e.target?.result as string);
-    reader.readAsDataURL(file);
+  const handleSpecChange = (index: number, field: 'label' | 'value', value: string) => {
+    setSpecs(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
   };
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleImageFile(file);
+  const addSpec = () => {
+    if (specs.length >= 8) return;
+    setSpecs(prev => [...prev, { label: '', value: '' }]);
+  };
+
+  const removeSpec = (index: number) => {
+    setSpecs(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const processImageFile = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        reject('Invalid image file');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        reject('Image must be smaller than 5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.onerror = () => reject('Failed to read file');
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFiles = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    const remaining = 5 - imagePreviews.length;
+    if (remaining <= 0) {
+      toast.error('Maximum 5 images allowed.');
+      return;
+    }
+    const toProcess = fileArray.slice(0, remaining);
+    const results: string[] = [];
+    for (const file of toProcess) {
+      try {
+        const base64 = await processImageFile(file);
+        results.push(base64);
+      } catch (err) {
+        toast.error(typeof err === 'string' ? err : 'Failed to process image');
+      }
+    }
+    if (results.length > 0) {
+      setImagePreviews(prev => [...prev, ...results]);
+    }
+  };
+
+  const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) await handleFiles(e.target.files);
     e.target.value = '';
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) handleImageFile(file);
+    if (e.dataTransfer.files) await handleFiles(e.dataTransfer.files);
   };
 
-  const handleRemoveImage = () => {
-    setImagePreview(null);
-    setImageFile(null);
+  const removeImage = (index: number) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,24 +133,27 @@ export default function AddItemPage() {
       toast.error('Please fill in all required fields.');
       return;
     }
+    if (imagePreviews.length === 0) {
+      toast.error('Please upload at least one image.');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      // If we have an image preview but no real backend upload yet, we can send it as a base64 string
-      // Note: MongoDB has a 16MB limit, so large base64 strings might fail.
+      const filteredSpecs = specs.filter(s => s.label.trim() && s.value.trim());
       const payload = {
         ...formData,
-        imageUrl: imagePreview || ''
+        images: imagePreviews,
+        imageUrl: imagePreviews[0],
+        specs: filteredSpecs,
       };
 
       const res = await api.post('/items', payload);
-      
       if (res.data.success) {
         toast.success('Item added successfully!');
         router.push('/items/manage');
       }
     } catch (error: any) {
-      console.error(error);
       toast.error(error.response?.data?.message || 'Failed to add item. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -113,150 +169,184 @@ export default function AddItemPage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/20 flex flex-col">
+    <div className="min-h-screen bg-background">
       <Navbar />
-
-      <main className="flex-1 container mx-auto px-4 pt-24 pb-16 max-w-3xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Add New Item</h1>
-          <p className="text-muted-foreground mt-1">Create a new listing or product to display on the platform.</p>
+      <main className="container mx-auto max-w-4xl px-4 pt-28 pb-16">
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-4xl font-extrabold tracking-tight mb-2">Add New Listing</h1>
+          <p className="text-muted-foreground text-lg">Fill in the details to publish your property.</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <Card className="shadow-md overflow-hidden">
-            <CardHeader className="border-b bg-card rounded-t-xl pb-6">
-              <CardTitle>Item Details</CardTitle>
-              <CardDescription>Fill out the required information below to create your item.</CardDescription>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* === IMAGES === */}
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader>
+              <CardTitle>Photos</CardTitle>
+              <CardDescription>Upload up to 5 images. The first image will be the cover photo.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 pt-6">
-
-              {/* Photo Upload */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
-                  Photo <span className="text-muted-foreground font-normal">(Optional)</span>
-                </label>
-
-                {imagePreview ? (
-                  <div className="relative w-full h-56 rounded-xl overflow-hidden border border-border group">
-                    <Image
-                      src={imagePreview}
-                      alt="Preview"
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                      <Button
+            <CardContent>
+              {/* Previews */}
+              {imagePreviews.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
+                  {imagePreviews.map((src, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-border">
+                      <Image src={src} alt={`Preview ${idx + 1}`} fill className="object-cover" />
+                      {idx === 0 && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-primary/80 text-primary-foreground text-[10px] text-center py-0.5 font-semibold">
+                          COVER
+                        </div>
+                      )}
+                      <button
                         type="button"
-                        size="sm"
-                        variant="outline"
-                        className="bg-white/90 text-black hover:bg-white border-0"
-                        onClick={() => fileInputRef.current?.click()}
+                        onClick={() => removeImage(idx)}
+                        className="absolute top-1.5 right-1.5 bg-background/90 text-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity shadow"
                       >
-                        <UploadCloud className="w-4 h-4 mr-1" /> Change
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="destructive"
-                        onClick={handleRemoveImage}
-                      >
-                        <X className="w-4 h-4 mr-1" /> Remove
-                      </Button>
+                        <X className="w-3.5 h-3.5" />
+                      </button>
                     </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Drop zone */}
+              {imagePreviews.length < 5 && (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleDrop}
+                  className={`flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-2xl p-10 cursor-pointer transition-all ${
+                    isDragging ? 'border-primary bg-primary/5' : 'border-border/60 hover:border-primary/50 hover:bg-muted/30'
+                  }`}
+                >
+                  <UploadCloud className={`w-10 h-10 ${isDragging ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <div className="text-center">
+                    <p className="font-medium text-sm">Drag & drop images here</p>
+                    <p className="text-xs text-muted-foreground mt-1">or click to browse — PNG, JPG up to 5MB each</p>
                   </div>
-                ) : (
-                  <div
-                    className={`w-full h-44 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 cursor-pointer transition-colors ${
-                      isDragging
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-primary/50 hover:bg-muted/50'
-                    }`}
-                    onClick={() => fileInputRef.current?.click()}
-                    onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                    onDragLeave={() => setIsDragging(false)}
-                    onDrop={handleDrop}
-                  >
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                      <ImageIcon className="w-6 h-6" />
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm font-medium">
-                        <span className="text-primary">Click to upload</span> or drag & drop
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WEBP up to 5MB</p>
-                    </div>
-                  </div>
-                )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileInput}
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png,image/jpeg,image/jpg,image/webp"
-                  className="hidden"
-                  onChange={handleFileInput}
-                />
+          {/* === BASIC INFO === */}
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader>
+              <CardTitle>Basic Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Title <span className="text-destructive">*</span></label>
+                <Input name="title" value={formData.title} onChange={handleChange} placeholder="e.g. Cozy Beach House with Ocean View" />
               </div>
 
-              {/* Title */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Title <span className="text-destructive">*</span></label>
-                <Input
-                  name="title"
-                  placeholder="e.g., Luxury Mountain Cabin"
-                  value={formData.title}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Price per Night <span className="text-destructive">*</span></label>
+                  <Input name="price" value={formData.price} onChange={handleChange} placeholder="e.g. 150" type="number" min="0" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Location</label>
+                  <Input name="location" value={formData.location} onChange={handleChange} placeholder="e.g. Malibu, California" />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Category</label>
+                <select
+                  name="category"
+                  value={formData.category}
                   onChange={handleChange}
-                  required
-                />
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
               </div>
 
-              {/* Price */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Price <span className="text-destructive">*</span></label>
-                <Input
-                  name="price"
-                  placeholder="e.g., $150/night"
-                  value={formData.price}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              {/* Short Description */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Short Description <span className="text-destructive">*</span></label>
-                <Input
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Short Description <span className="text-destructive">*</span></label>
+                <Textarea
                   name="shortDescription"
-                  placeholder="A brief catchy tagline or summary..."
                   value={formData.shortDescription}
                   onChange={handleChange}
-                  required
+                  placeholder="A brief, catchy summary of the property..."
+                  rows={2}
                 />
               </div>
 
-              {/* Full Description */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Full Description <span className="text-muted-foreground font-normal">(Optional)</span></label>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Full Description</label>
                 <Textarea
                   name="fullDescription"
-                  placeholder="Provide all the details about your item here..."
-                  className="min-h-[150px] resize-y"
                   value={formData.fullDescription}
                   onChange={handleChange}
+                  placeholder="Describe your property in detail — amenities, nearby attractions, house rules..."
+                  rows={6}
                 />
               </div>
-
             </CardContent>
-
-            <div className="p-6 pt-0 mt-4 flex items-center justify-end gap-3 border-t bg-muted/50 rounded-b-xl py-4">
-              <Button type="button" variant="outline" onClick={() => router.back()} disabled={isSubmitting}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting} className="min-w-[120px]">
-                {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-                {isSubmitting ? 'Adding...' : 'Submit (Add)'}
-              </Button>
-            </div>
           </Card>
+
+          {/* === SPECS === */}
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader>
+              <CardTitle>Key Specifications</CardTitle>
+              <CardDescription>Add property details like guests, bedrooms, bathrooms, area, etc.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {specs.map((spec, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <Input
+                    value={spec.label}
+                    onChange={(e) => handleSpecChange(index, 'label', e.target.value)}
+                    placeholder="Label (e.g. Bedrooms)"
+                    className="flex-1"
+                  />
+                  <Input
+                    value={spec.value}
+                    onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
+                    placeholder="Value (e.g. 3)"
+                    className="flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeSpec(index)}
+                    className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              {specs.length < 8 && (
+                <Button type="button" variant="outline" size="sm" onClick={addSpec} className="gap-1.5">
+                  <Plus className="w-4 h-4" /> Add Specification
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* === SUBMIT === */}
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={() => router.back()}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="min-w-[140px] bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-lg"
+            >
+              {isSubmitting ? <><Loader2 className="animate-spin w-4 h-4 mr-2" />Publishing...</> : 'Publish Listing'}
+            </Button>
+          </div>
         </form>
       </main>
     </div>

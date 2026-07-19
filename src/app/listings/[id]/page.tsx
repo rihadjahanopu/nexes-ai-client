@@ -1,271 +1,452 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
-import { ListingCard, ListingType } from '@/components/listings/ListingCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Star, MapPin, Share, Heart, Wifi, Car, Coffee, Wind, Check, ChevronRight } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { ListingCard, ListingType } from '@/components/listings/ListingCard';
+import {
+  MapPin, Share, Heart, ChevronRight, Check,
+  Star, Loader2, Send, Home, Copy, CheckCheck
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import api from '@/lib/axios';
+import { useAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
 
-// Dummy data for the specific listing
-const LISTING_DATA = {
-  id: '1',
-  title: 'Modern Seaside Villa',
-  description: 'Experience unparalleled luxury in this stunning seaside villa. Featuring breathtaking panoramic ocean views, a private infinity pool, and state-of-the-art amenities, this is the perfect getaway for those seeking tranquility and elegance. The open-plan living area seamlessly blends indoor and outdoor spaces, allowing you to enjoy the gentle sea breeze at all times.',
-  price: '$450/night',
-  rating: 4.9,
-  reviewsCount: 128,
-  location: 'Malibu, California',
-  host: 'Sarah Johnson',
-  images: [
-    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1200',
-    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=800',
-    'https://images.unsplash.com/photo-1600607687931-cebf14f045c7?auto=format&fit=crop&q=80&w=800',
-    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&q=80&w=800',
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800',
-  ],
-  specs: [
-    { label: 'Guests', value: '8' },
-    { label: 'Bedrooms', value: '4' },
-    { label: 'Bathrooms', value: '3.5' },
-    { label: 'Area', value: '3,200 sqft' },
-  ],
-  amenities: [
-    { name: 'Fast WiFi', icon: <Wifi className="w-4 h-4" /> },
-    { name: 'Free Parking', icon: <Car className="w-4 h-4" /> },
-    { name: 'Coffee Maker', icon: <Coffee className="w-4 h-4" /> },
-    { name: 'Air Conditioning', icon: <Wind className="w-4 h-4" /> },
-  ],
-  reviews: [
-    {
-      id: 'r1',
-      author: 'Michael T.',
-      date: 'October 2023',
-      rating: 5,
-      content: 'Absolutely incredible stay. The views are even better than the photos. We spent most of our time by the infinity pool. The house was spotless and the host was very communicative.',
-    },
-    {
-      id: 'r2',
-      author: 'Jessica W.',
-      date: 'September 2023',
-      rating: 4,
-      content: 'Beautiful home and great location. A bit pricey but worth it for a special occasion. Only minor issue was the WiFi was slightly spotty in one of the bedrooms.',
-    },
-  ]
-};
+interface Review {
+  _id: string;
+  user: string;
+  name: string;
+  avatar?: string;
+  rating: number;
+  content: string;
+  createdAt: string;
+}
 
-// Dummy related items
-const RELATED_ITEMS: ListingType[] = [
-  {
-    id: '2',
-    title: 'Cozy Mountain Cabin',
-    description: 'Escape to nature in this rustic yet luxurious cabin.',
-    imageUrl: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800',
-    price: '$200/night',
-    rating: 4.7,
-    location: 'Aspen, Colorado',
-    date: 'Available Now',
-  },
-  {
-    id: '3',
-    title: 'Downtown Penthouse',
-    description: 'Experience city living at its finest with skyline views.',
-    imageUrl: 'https://images.unsplash.com/photo-1502672260266-1c1e524084f7?auto=format&fit=crop&q=80&w=800',
-    price: '$350/night',
-    rating: 4.8,
-    location: 'New York City, NY',
-    date: 'Oct 1 - Oct 5',
-  },
-  {
-    id: '4',
-    title: 'Desert Oasis Retreat',
-    description: 'Unwind in the desert with luxury amenities.',
-    imageUrl: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&q=80&w=800',
-    price: '$280/night',
-    rating: 4.6,
-    location: 'Joshua Tree, CA',
-    date: 'Oct 10 - Oct 15',
-  },
-];
+interface Spec {
+  label: string;
+  value: string;
+}
+
+interface ItemDetail {
+  _id: string;
+  title: string;
+  shortDescription: string;
+  fullDescription?: string;
+  price: string;
+  imageUrl?: string;
+  images?: string[];
+  category?: string;
+  location?: string;
+  rating: number;
+  reviewCount: number;
+  specs?: Spec[];
+  reviews?: Review[];
+  owner?: { name: string; avatar?: string };
+}
+
+// Reusable avatar component
+function UserAvatar({ name, avatar, size = 'md' }: { name: string; avatar?: string; size?: 'sm' | 'md' | 'lg' }) {
+  const sizeMap = {
+    sm: 'w-8 h-8 text-xs',
+    md: 'w-10 h-10 text-sm',
+    lg: 'w-14 h-14 text-xl',
+  };
+  if (avatar) {
+    return (
+      <div className={`${sizeMap[size]} rounded-full overflow-hidden shrink-0 border border-border/50`}>
+        <Image src={avatar} alt={name} width={56} height={56} className="w-full h-full object-cover" />
+      </div>
+    );
+  }
+  return (
+    <div className={`${sizeMap[size]} bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold uppercase shrink-0`}>
+      {name.charAt(0)}
+    </div>
+  );
+}
+
+function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [hovered, setHovered] = useState(0);
+  return (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => onChange(star)}
+          onMouseEnter={() => setHovered(star)}
+          onMouseLeave={() => setHovered(0)}
+          className="focus:outline-none"
+        >
+          <Star
+            className={`w-6 h-6 transition-colors ${
+              star <= (hovered || value)
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'text-muted-foreground'
+            }`}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export default function ListingDetailsPage() {
+  const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
+
+  const [item, setItem] = useState<ItemDetail | null>(null);
+  const [related, setRelated] = useState<ListingType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeImage, setActiveImage] = useState(0);
+  const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const [reviewContent, setReviewContent] = useState('');
+  const [reviewRating, setReviewRating] = useState(0);
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  useEffect(() => {
+    const fetchItem = async () => {
+      try {
+        const res = await api.get(`/items/${id}`);
+        if (res.data.success) {
+          setItem(res.data.data);
+          const mappedRelated = (res.data.related || []).map((r: any) => ({
+            ...r,
+            id: r._id,
+            date: new Date(r.createdAt).toLocaleDateString(),
+          }));
+          setRelated(mappedRelated);
+        }
+      } catch {
+        toast.error('Failed to load listing.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) fetchItem();
+
+    // Load saved state from localStorage
+    const savedItems: string[] = JSON.parse(localStorage.getItem('savedListings') || '[]');
+    setSaved(savedItems.includes(id as string));
+  }, [id]);
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = item?.title || 'Check out this listing';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast.success('Link copied to clipboard!');
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleSave = () => {
+    const saved_: string[] = JSON.parse(localStorage.getItem('savedListings') || '[]');
+    let updated: string[];
+    if (saved_.includes(id as string)) {
+      updated = saved_.filter((s) => s !== id);
+      setSaved(false);
+      toast('Removed from saved listings', { icon: '🗑️' });
+    } else {
+      updated = [...saved_, id as string];
+      setSaved(true);
+      toast.success('Saved to your listings!');
+    }
+    localStorage.setItem('savedListings', JSON.stringify(updated));
+  };
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) { toast.error('You must be logged in to leave a review.'); return; }
+    if (!reviewRating) { toast.error('Please select a star rating.'); return; }
+    if (!reviewContent.trim()) { toast.error('Please write a review.'); return; }
+
+    setSubmittingReview(true);
+    try {
+      const res = await api.post(`/items/${id}/reviews`, { rating: reviewRating, content: reviewContent });
+      if (res.data.success) {
+        toast.success('Review submitted!');
+        setReviewContent('');
+        setReviewRating(0);
+        // Refresh item to get updated reviews
+        const updated = await api.get(`/items/${id}`);
+        if (updated.data.success) setItem(updated.data.data);
+      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to submit review.');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Navbar />
+        <Loader2 className="animate-spin h-10 w-10 text-primary" />
+      </div>
+    );
+  }
+
+  if (!item) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <Navbar />
+        <Home className="w-12 h-12 text-muted-foreground" />
+        <p className="text-lg font-semibold">Listing not found.</p>
+        <Link href="/listings"><Button variant="outline">Back to Listings</Button></Link>
+      </div>
+    );
+  }
+
+  const images = (item.images && item.images.length > 0) ? item.images : (item.imageUrl ? [item.imageUrl] : []);
+  const specs = item.specs?.filter(s => s.label && s.value) || [];
+  const reviews = item.reviews || [];
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
-      <main className="container mx-auto px-4 pt-24 pb-16 max-w-7xl">
-        {/* Breadcrumb & Header */}
-        <div className="flex flex-col gap-4 mb-6">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-            <ChevronRight className="w-4 h-4 mx-1" />
-            <Link href="/listings" className="hover:text-primary transition-colors">Stays</Link>
-            <ChevronRight className="w-4 h-4 mx-1" />
-            <span className="text-foreground">{LISTING_DATA.title}</span>
-          </div>
 
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{LISTING_DATA.title}</h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm">
+      <main className="container mx-auto px-4 pt-24 pb-16 max-w-7xl">
+
+        {/* Breadcrumb */}
+        <div className="flex items-center text-sm text-muted-foreground mb-6 gap-1">
+          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <Link href="/listings" className="hover:text-primary transition-colors">Stays</Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <span className="text-foreground truncate max-w-[200px]">{item.title}</span>
+        </div>
+
+        {/* Title & Actions */}
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{item.title}</h1>
+            <div className="flex flex-wrap items-center gap-4 text-sm">
+              {item.rating > 0 && (
                 <div className="flex items-center gap-1 font-medium">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  {LISTING_DATA.rating} <span className="text-muted-foreground underline cursor-pointer">({LISTING_DATA.reviewsCount} reviews)</span>
+                  <span>{item.rating.toFixed(1)}</span>
+                  <span className="text-muted-foreground">({item.reviewCount} reviews)</span>
                 </div>
+              )}
+              {item.location && (
                 <div className="flex items-center gap-1 text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  <span className="underline cursor-pointer">{LISTING_DATA.location}</span>
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>{item.location}</span>
                 </div>
-              </div>
+              )}
+              {item.category && (
+                <span className="bg-primary/10 text-primary text-xs font-semibold px-2.5 py-1 rounded-full">
+                  {item.category}
+                </span>
+              )}
             </div>
-            
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Share className="w-4 h-4" /> Share
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2 group hover:border-red-200">
-                <Heart className="w-4 h-4 group-hover:fill-red-500 group-hover:text-red-500 transition-colors" /> Save
-              </Button>
-            </div>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Button variant="outline" size="sm" className="gap-2" onClick={handleShare}>
+              {copied ? <CheckCheck className="w-4 h-4 text-green-500" /> : <Share className="w-4 h-4" />}
+              {copied ? 'Copied!' : 'Share'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className={`gap-2 transition-colors ${saved ? 'border-red-300 bg-red-50 dark:bg-red-950/20' : 'hover:border-red-200'}`}
+              onClick={handleSave}
+            >
+              <Heart className={`w-4 h-4 transition-all duration-200 ${saved ? 'fill-red-500 text-red-500 scale-110' : 'group-hover:fill-red-500 group-hover:text-red-500'}`} />
+              {saved ? 'Saved' : 'Save'}
+            </Button>
           </div>
         </div>
 
-        {/* Image Gallery */}
-        <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-2 h-[400px] md:h-[500px] rounded-2xl overflow-hidden mb-12">
-          <div className="md:col-span-2 row-span-2 relative h-full">
-            <Image 
-              src={LISTING_DATA.images[0]} 
-              alt="Main view" 
-              fill 
-              className="object-cover hover:scale-105 transition-transform duration-700 cursor-pointer"
-            />
-          </div>
-          <div className="hidden md:block relative h-full">
-            <Image 
-              src={LISTING_DATA.images[1]} 
-              alt="View 2" 
-              fill 
-              className="object-cover hover:scale-105 transition-transform duration-700 cursor-pointer"
-            />
-          </div>
-          <div className="hidden md:block relative h-full">
-            <Image 
-              src={LISTING_DATA.images[2]} 
-              alt="View 3" 
-              fill 
-              className="object-cover hover:scale-105 transition-transform duration-700 cursor-pointer"
-            />
-          </div>
-          <div className="hidden md:block relative h-full">
-            <Image 
-              src={LISTING_DATA.images[3]} 
-              alt="View 4" 
-              fill 
-              className="object-cover hover:scale-105 transition-transform duration-700 cursor-pointer"
-            />
-          </div>
-          <div className="hidden md:block relative h-full">
-            <Image 
-              src={LISTING_DATA.images[4]} 
-              alt="View 5" 
-              fill 
-              className="object-cover hover:scale-105 transition-transform duration-700 cursor-pointer"
-            />
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer hover:bg-black/50 transition-colors">
-              <span className="text-white font-medium flex items-center gap-2">
-                View all photos
-              </span>
+        {/* ===== IMAGE GALLERY ===== */}
+        {images.length > 0 && (
+          <div className="mb-12">
+            {/* Main image */}
+            <div className="relative w-full h-[400px] md:h-[520px] rounded-2xl overflow-hidden mb-3">
+              <Image
+                src={images[activeImage]}
+                alt={item.title}
+                fill
+                className="object-cover transition-all duration-500"
+                priority
+              />
+              {images.length > 1 && (
+                <div className="absolute bottom-4 right-4 bg-background/80 backdrop-blur-sm text-sm font-medium px-3 py-1 rounded-full">
+                  {activeImage + 1} / {images.length}
+                </div>
+              )}
             </div>
-          </div>
-        </div>
-
-        {/* Main Content Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Left Column - Details */}
-          <div className="lg:col-span-2 space-y-12">
-            
-            {/* Overview & Key Info */}
-            <section>
-              <div className="flex items-center justify-between border-b pb-6 mb-6">
-                <div>
-                  <h2 className="text-2xl font-semibold mb-1">Entire villa hosted by {LISTING_DATA.host}</h2>
-                  <div className="flex gap-4 text-sm text-muted-foreground">
-                    {LISTING_DATA.specs.map(spec => (
-                      <span key={spec.label}>{spec.value} {spec.label}</span>
-                    ))}
-                  </div>
-                </div>
-                <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xl font-bold">
-                  {LISTING_DATA.host.charAt(0)}
-                </div>
-              </div>
-
-              {/* Description */}
-              <div className="prose dark:prose-invert max-w-none">
-                <p className="text-muted-foreground leading-relaxed">
-                  {LISTING_DATA.description}
-                </p>
-                <Button variant="link" className="px-0 mt-2 font-semibold">Show more <ChevronRight className="w-4 h-4 ml-1"/></Button>
-              </div>
-            </section>
-
-            {/* Specifications / Amenities */}
-            <section className="pt-6 border-t">
-              <h3 className="text-xl font-semibold mb-6">What this place offers</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {LISTING_DATA.amenities.map(amenity => (
-                  <div key={amenity.name} className="flex items-center gap-3 text-muted-foreground">
-                    {amenity.icon}
-                    <span>{amenity.name}</span>
-                  </div>
+            {/* Thumbnails */}
+            {images.length > 1 && (
+              <div className="grid grid-cols-5 gap-2">
+                {images.map((src, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveImage(idx)}
+                    className={`relative aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all ${
+                      activeImage === idx ? 'border-primary shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
+                    }`}
+                  >
+                    <Image src={src} alt={`View ${idx + 1}`} fill className="object-cover" />
+                  </button>
                 ))}
               </div>
-              <Button variant="outline" className="mt-8">Show all 24 amenities</Button>
-            </section>
+            )}
+          </div>
+        )}
 
-            {/* Reviews Section */}
-            <section className="pt-6 border-t">
-              <div className="flex items-center gap-2 mb-8">
-                <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-                <h3 className="text-2xl font-semibold">{LISTING_DATA.rating} · {LISTING_DATA.reviewsCount} reviews</h3>
-              </div>
+        {/* ===== MAIN CONTENT ===== */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {LISTING_DATA.reviews.map(review => (
-                  <div key={review.id} className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center font-semibold">
-                        {review.author.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="font-medium">{review.author}</div>
-                        <div className="text-sm text-muted-foreground">{review.date}</div>
-                      </div>
-                    </div>
-                    <div className="flex text-yellow-400">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-current' : 'fill-muted text-muted'}`} />
+          {/* Left column */}
+          <div className="lg:col-span-2 space-y-10">
+
+            {/* Overview */}
+            <section className="border-b pb-10">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-semibold mb-1">
+                    Hosted by {item.owner?.name || 'Anonymous'}
+                  </h2>
+                  {specs.length > 0 && (
+                    <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                      {specs.map((s) => (
+                        <span key={s.label}>{s.value} {s.label}</span>
                       ))}
                     </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {review.content}
-                    </p>
-                  </div>
-                ))}
+                  )}
+                </div>
+                <UserAvatar name={item.owner?.name || 'A'} avatar={item.owner?.avatar} size="lg" />
               </div>
-              <Button variant="outline" className="mt-8">Show all {LISTING_DATA.reviewsCount} reviews</Button>
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                {item.shortDescription}
+              </p>
             </section>
+
+            {/* Full Description */}
+            {item.fullDescription && (
+              <section className="border-b pb-10">
+                <h3 className="text-xl font-semibold mb-4">About this place</h3>
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                  {item.fullDescription}
+                </p>
+              </section>
+            )}
+
+            {/* Key Specifications */}
+            {specs.length > 0 && (
+              <section className="border-b pb-10">
+                <h3 className="text-xl font-semibold mb-6">Key Specifications</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {specs.map((spec) => (
+                    <div key={spec.label} className="bg-muted/40 rounded-xl p-4 border border-border/50">
+                      <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-1">{spec.label}</p>
+                      <p className="text-lg font-bold">{spec.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Reviews */}
+            <section className="border-b pb-10">
+              <div className="flex items-center gap-3 mb-8">
+                <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
+                <h3 className="text-2xl font-semibold">
+                  {item.rating > 0 ? `${item.rating.toFixed(1)} · ` : ''}{item.reviewCount} {item.reviewCount === 1 ? 'review' : 'reviews'}
+                </h3>
+              </div>
+
+              {reviews.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                  {reviews.map((review) => (
+                    <div key={review._id} className="flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <UserAvatar name={review.name} avatar={review.avatar} size="md" />
+                        <div>
+                          <div className="font-medium text-sm">{review.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {new Date(review.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-0.5">
+                        {[1,2,3,4,5].map(s => (
+                          <Star key={s} className={`w-3.5 h-3.5 ${s <= review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted fill-muted'}`} />
+                        ))}
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{review.content}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-sm mb-8">No reviews yet. Be the first to leave one!</p>
+              )}
+
+              {/* Submit Review */}
+              {user ? (
+                <form onSubmit={handleSubmitReview} className="bg-muted/30 border rounded-2xl p-6 space-y-4">
+                  <h4 className="font-semibold text-base">Leave a Review</h4>
+                  <StarRating value={reviewRating} onChange={setReviewRating} />
+                  <Textarea
+                    value={reviewContent}
+                    onChange={(e) => setReviewContent(e.target.value)}
+                    placeholder="Share your experience..."
+                    rows={3}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={submittingReview}
+                    className="gap-2 bg-gradient-to-r from-primary to-blue-600"
+                  >
+                    {submittingReview
+                      ? <><Loader2 className="animate-spin w-4 h-4" /> Submitting...</>
+                      : <><Send className="w-4 h-4" /> Submit Review</>
+                    }
+                  </Button>
+                </form>
+              ) : (
+                <div className="bg-muted/30 border rounded-2xl p-6 text-center">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    <Link href="/login" className="text-primary font-semibold hover:underline">Log in</Link> to leave a review.
+                  </p>
+                </div>
+              )}
+            </section>
+
           </div>
 
-          {/* Right Column - Booking Card (Sticky) */}
+          {/* Right — Booking Card */}
           <div className="relative">
             <div className="sticky top-24">
               <Card className="border-border shadow-xl shadow-black/5 dark:shadow-white/5">
                 <CardHeader>
                   <CardTitle className="text-2xl font-bold">
-                    {LISTING_DATA.price} <span className="text-base font-normal text-muted-foreground">night</span>
+                    ${item.price} <span className="text-base font-normal text-muted-foreground">/ night</span>
                   </CardTitle>
+                  {item.rating > 0 && (
+                    <div className="flex items-center gap-1 text-sm">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-medium">{item.rating.toFixed(1)}</span>
+                      <span className="text-muted-foreground">({item.reviewCount} reviews)</span>
+                    </div>
+                  )}
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-5">
                   <div className="grid grid-cols-2 gap-px bg-border border border-border rounded-lg overflow-hidden">
                     <div className="p-3 bg-card flex flex-col cursor-pointer hover:bg-muted/50 transition-colors">
                       <span className="text-[10px] font-bold uppercase text-foreground">Check-in</span>
@@ -285,55 +466,32 @@ export default function ListingDetailsPage() {
                     Reserve
                   </Button>
 
-                  <div className="text-center text-sm text-muted-foreground">
-                    You won't be charged yet
-                  </div>
-
-                  <div className="space-y-3 pt-4 border-t">
-                    <div className="flex justify-between text-sm">
-                      <span className="underline cursor-pointer">$450 x 5 nights</span>
-                      <span>$2,250</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="underline cursor-pointer">Cleaning fee</span>
-                      <span>$120</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="underline cursor-pointer">Service fee</span>
-                      <span>$350</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between font-bold pt-4 border-t text-lg">
-                    <span>Total before taxes</span>
-                    <span>$2,720</span>
-                  </div>
+                  <p className="text-center text-sm text-muted-foreground">You won&apos;t be charged yet</p>
                 </CardContent>
               </Card>
 
-              {/* Trust Badge */}
-              <div className="mt-6 p-4 border rounded-xl flex items-start gap-4 bg-muted/30">
-                <div className="mt-1">
-                  <Check className="w-5 h-5 text-green-500" />
-                </div>
+              <div className="mt-4 p-4 border rounded-xl flex items-start gap-3 bg-muted/30">
+                <Check className="w-5 h-5 text-green-500 mt-0.5 shrink-0" />
                 <div>
-                  <h4 className="font-medium">Free cancellation for 48 hours.</h4>
-                  <p className="text-sm text-muted-foreground">After that, cancel before check-in and get a 50% refund, minus the service fee.</p>
+                  <p className="font-medium text-sm">Free cancellation for 48 hours.</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Get a full refund if you change your mind.</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Related Items Section */}
-        <section className="pt-16 mt-16 border-t">
-          <h2 className="text-2xl font-bold mb-8">More places to stay</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {RELATED_ITEMS.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-        </section>
+        {/* ===== RELATED ITEMS ===== */}
+        {related.length > 0 && (
+          <section className="pt-16 mt-10 border-t">
+            <h2 className="text-2xl font-bold mb-8">More places to stay</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {related.map((r) => (
+                <ListingCard key={r.id} listing={r} />
+              ))}
+            </div>
+          </section>
+        )}
 
       </main>
     </div>

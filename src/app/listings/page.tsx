@@ -37,6 +37,8 @@ export default function ExplorePage() {
           const mappedItems = res.data.data.map((item: any) => ({
             ...item,
             id: item._id,
+            description: item.shortDescription,
+            owner: item.owner,
           }));
           setAllListings(mappedItems);
         }
