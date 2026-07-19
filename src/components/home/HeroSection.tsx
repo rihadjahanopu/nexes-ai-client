@@ -15,37 +15,35 @@ export function HeroSection() {
 				className="w-full max-w-5xl mx-auto px-6 text-center z-10 relative"
 			>
 				<div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-sm font-medium tracking-wide">
-					✨ The Future of Productivity is Here
+					✨ Discover Exceptional Stays
 				</div>
 				<h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
-					Your Autonomous <br />
+					Find Your Perfect <br />
 					<span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-500 to-purple-500">
-						Workspace Copilot
+						Getaway
 					</span>
 				</h1>
 				<p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed px-2">
-					Nexus doesn't just manage your tasks—it executes them. Combine
-					project management with agentic AI to analyze data, draft
-					strategies, and automate workflows.
+					Explore thousands of apartments, villas, and cabins. Nexus AI helps you discover, book, and manage the perfect property for your next adventure.
 				</p>
 				<div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
 					<Link
-						href="/register"
+						href="/listings"
 						className="w-full sm:w-auto">
 						<Button
 							size="lg"
 							className="w-full sm:w-auto h-12 sm:h-14 px-8 text-base sm:text-lg rounded-full shadow-lg shadow-primary/25 hover:scale-105 transition-transform">
-							Start for free <ArrowRight className="ml-2 h-5 w-5" />
+							Explore Stays <ArrowRight className="ml-2 h-5 w-5" />
 						</Button>
 					</Link>
 					<Link
-						href="/login"
+						href="/chat"
 						className="w-full sm:w-auto">
 						<Button
 							size="lg"
 							variant="outline"
 							className="w-full sm:w-auto h-12 sm:h-14 px-8 text-base sm:text-lg rounded-full bg-background/50 backdrop-blur hover:bg-muted">
-							View Demo
+							AI Chat
 						</Button>
 					</Link>
 				</div>
