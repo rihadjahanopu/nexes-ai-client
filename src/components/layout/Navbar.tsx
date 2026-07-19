@@ -46,8 +46,8 @@ export function Navbar() {
       <nav
         className={`w-full max-w-[1200px] rounded-full border transition-all duration-300 ease-out shadow-lg relative
           ${isScrolled
-            ? 'bg-background/70 backdrop-blur-xl border-primary/20 py-2.5 sm:py-3'
-            : 'bg-background/40 backdrop-blur-md border-border/50 py-3.5 sm:py-4'
+            ? 'bg-background/70 backdrop-blur-xl border-primary/20 py-2 sm:py-2.5'
+            : 'bg-background/40 backdrop-blur-md border-border/50 py-3 sm:py-3.5'
           }`}
       >
         <div className="flex items-center justify-between px-3 sm:px-6">
