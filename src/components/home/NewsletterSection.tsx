@@ -10,11 +10,11 @@ export function NewsletterSection() {
 				<div className="bg-primary/5 rounded-3xl p-10 md:p-16 border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-10">
 					<div className="flex-1">
 						<h2 className="text-3xl md:text-4xl font-bold mb-4">
-							Stay ahead of the curve
+							Discover Your Next Adventure
 						</h2>
 						<p className="text-lg text-muted-foreground">
-							Join our newsletter to get the latest updates on agentic AI,
-							productivity tips, and exclusive early access features.
+							Join our newsletter to get the latest travel destinations,
+							booking tips, and exclusive early access deals.
 						</p>
 					</div>
 					<div className="flex-1 w-full max-w-md">

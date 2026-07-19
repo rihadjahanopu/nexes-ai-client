@@ -53,10 +53,10 @@ export function ResourcesSection() {
 				<div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
 					<div>
 						<h2 className="text-4xl md:text-5xl font-bold mb-4">
-							Latest Insights
+							Latest Travel Insights
 						</h2>
 						<p className="text-xl text-muted-foreground">
-							Learn how to maximize your autonomous workspace.
+							Learn how to make the most of your trips and property listings.
 						</p>
 					</div>
 					<Button
@@ -68,21 +68,21 @@ export function ResourcesSection() {
 
 				<div className="grid md:grid-cols-3 gap-8">
 					<BlogCard
-						title="The Rise of Agentic Workflows"
+						title="Top 10 Hidden Gem Destinations for 2026"
 						date="Jul 12, 2026"
-						category="AI Trends"
+						category="Travel Guides"
 						imageId="1"
 					/>
 					<BlogCard
-						title="How to structure context for better AI outputs"
+						title="How to optimize your property listing with AI"
 						date="Jul 05, 2026"
-						category="Guides"
+						category="Host Tips"
 						imageId="2"
 					/>
 					<BlogCard
-						title="Why traditional project management is dying"
+						title="Why smart booking is the future of travel"
 						date="Jun 28, 2026"
-						category="Opinion"
+						category="Industry Trends"
 						imageId="3"
 					/>
 				</div>

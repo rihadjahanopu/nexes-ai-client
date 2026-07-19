@@ -40,10 +40,10 @@ export function HowItWorksSection() {
 			<div className="container mx-auto px-4">
 				<div className="text-center mb-20">
 					<h2 className="text-4xl md:text-5xl font-bold mb-6">
-						How Nexus Works
+						How Nexus AI Works
 					</h2>
 					<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-						From idea to execution in three simple steps.
+						Find and book your next stay in three simple steps.
 					</p>
 				</div>
 
@@ -54,20 +54,20 @@ export function HowItWorksSection() {
 					<StepCard
 						number="1"
 						icon={<UploadCloud className="h-8 w-8 text-primary" />}
-						title="Upload Context"
-						description="Create a project and upload your documents, code, or ideas to give the AI context."
+						title="Search Properties"
+						description="Enter your destination, dates, and preferences to browse our extensive list of properties."
 					/>
 					<StepCard
 						number="2"
 						icon={<Bot className="h-8 w-8 text-blue-500" />}
-						title="Agent Plans"
-						description="The autonomous agent analyzes the context and creates a step-by-step execution plan."
+						title="AI Matchmaking"
+						description="Our smart AI analyzes your requirements to suggest the best matches that fit your budget and style."
 					/>
 					<StepCard
 						number="3"
 						icon={<CheckCircle className="h-8 w-8 text-green-500" />}
-						title="Automated Execution"
-						description="Review the plan and let the agent execute tasks, write code, or draft reports automatically."
+						title="Book & Relax"
+						description="Securely book your chosen property in a few clicks and get ready to enjoy your trip."
 					/>
 				</div>
 			</div>

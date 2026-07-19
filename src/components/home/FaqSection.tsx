@@ -35,20 +35,20 @@ export function FaqSection() {
 
 				<div className="space-y-4">
 					<FaqItem
-						question="What makes Nexus different from ChatGPT?"
-						answer="Nexus is built for autonomous execution, not just chatting. You can upload entire project contexts, and Nexus will break down goals, plan tasks, and execute them step-by-step automatically."
+						question="What makes Nexus AI different from other booking platforms?"
+						answer="Nexus AI acts as your personal travel concierge. You can simply chat about your preferences, and it will automatically find, filter, and book the perfect property for you."
 					/>
 					<FaqItem
-						question="Is my data secure?"
-						answer="Yes. We use enterprise-grade encryption for all your documents and chat history. We never train our public models on your private workspace data."
+						question="Are my payments and personal data secure?"
+						answer="Yes. We use enterprise-grade encryption for all transactions and personal data. We ensure your booking experience is 100% safe and secure."
 					/>
 					<FaqItem
-						question="Can I integrate Nexus with my existing tools?"
-						answer="Absolutely. Nexus Pro supports integrations with GitHub, Slack, Trello, Jira, and Google Drive, allowing the agent to read and write directly to your favorite apps."
+						question="How do I list my property on Nexus AI?"
+						answer="It's simple! Just go to the 'Manage Items' section and add your property details. Our AI will automatically optimize your listing for better visibility."
 					/>
 					<FaqItem
-						question="Do I need to know how to code to use Nexus?"
-						answer="Not at all. Nexus uses natural language. Just describe what you want to achieve, and the agent will figure out the technical steps to get it done."
+						question="Can I cancel or modify my booking?"
+						answer="Yes, you can manage your bookings directly from your dashboard or simply ask our 24/7 AI assistant to handle modifications or cancellations for you."
 					/>
 				</div>
 			</div>

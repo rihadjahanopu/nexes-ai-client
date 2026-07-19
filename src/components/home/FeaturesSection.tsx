@@ -35,29 +35,28 @@ export function FeaturesSection() {
 			<div className="container mx-auto px-4">
 				<div className="text-center mb-20">
 					<h2 className="text-4xl md:text-5xl font-bold mb-6">
-						Supercharge your workflow
+						Seamless Property Discovery
 					</h2>
 					<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-						Everything you need to manage projects and automate execution in
-						one place.
+						Everything you need to find, book, and manage your dream stays in one place.
 					</p>
 				</div>
 
 				<div className="grid md:grid-cols-3 gap-8">
 					<FeatureCard
 						icon={<FolderGit2 className="h-10 w-10 text-primary" />}
-						title="Smart Workspaces"
-						description="Organize your projects, upload documents, and track activity in one cohesive environment."
+						title="Extensive Listings"
+						description="Browse thousands of properties, from cozy cabins to luxury villas across top destinations."
 					/>
 					<FeatureCard
 						icon={<BrainCircuit className="h-10 w-10 text-blue-500" />}
-						title="Agentic Reasoning"
-						description="Our AI breaks down complex goals into actionable steps and selects the right tools for the job."
+						title="AI-Powered Search"
+						description="Let our AI find the perfect match for you based on your unique preferences and budget."
 					/>
 					<FeatureCard
 						icon={<MessageSquare className="h-10 w-10 text-purple-500" />}
-						title="Contextual Chat"
-						description="Chat with an AI assistant that remembers your past interactions and project history."
+						title="24/7 AI Assistant"
+						description="Get instant help with bookings, local recommendations, and inquiries through our intelligent chat."
 					/>
 				</div>
 			</div>

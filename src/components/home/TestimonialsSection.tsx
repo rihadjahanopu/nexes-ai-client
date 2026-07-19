@@ -41,28 +41,28 @@ export function TestimonialsSection() {
 			<div className="container mx-auto px-4">
 				<div className="text-center mb-20">
 					<h2 className="text-4xl md:text-5xl font-bold mb-6">
-						Loved by Innovators
+						Loved by Travelers
 					</h2>
 					<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-						See what our users are saying about Nexus.
+						See what our guests are saying about Nexus AI.
 					</p>
 				</div>
 
 				<div className="grid md:grid-cols-3 gap-8">
 					<TestimonialCard
-						quote="Nexus has completely transformed how my team handles research. The autonomous agents save us hundreds of hours a month."
+						quote="Nexus AI has completely transformed how I book my vacations. The AI assistant saved me hours of searching for the perfect spot."
 						name="Sarah Jenkins"
-						role="Product Manager @ TechCorp"
+						role="Frequent Traveler"
 					/>
 					<TestimonialCard
-						quote="The ability to just drop a PDF and have the AI create a full project plan and execute it is literal magic. Best tool of 2026."
+						quote="The ability to just tell the AI what I want and have it find the perfect luxury villa is literal magic. Best booking tool of 2026."
 						name="David Chen"
-						role="Founder & CEO"
+						role="Digital Nomad"
 					/>
 					<TestimonialCard
-						quote="I use Nexus for my daily coding tasks. It understands context better than any other AI I've used. Highly recommended!"
+						quote="I use Nexus AI for all my business trips. It understands my location preferences better than any human agent I've ever used. Highly recommended!"
 						name="Elena Rodriguez"
-						role="Senior Engineer"
+						role="Business Consultant"
 					/>
 				</div>
 			</div>

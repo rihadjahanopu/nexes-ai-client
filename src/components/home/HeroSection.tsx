@@ -37,7 +37,7 @@ export function HeroSection() {
 						</Button>
 					</Link>
 					<Link
-						href="/chat"
+						href="/projects"
 						className="w-full sm:w-auto">
 						<Button
 							size="lg"

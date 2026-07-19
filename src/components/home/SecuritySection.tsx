@@ -11,12 +11,10 @@ export function SecuritySection() {
 						<ShieldCheck className="h-10 w-10 text-primary" />
 					</div>
 					<h2 className="text-4xl md:text-5xl font-bold mb-6">
-						Enterprise-grade security
+						Safe and Secure Bookings
 					</h2>
 					<p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-						Your data is yours. Nexus uses end-to-end encryption for your
-						documents, and our AI models are never trained on your private
-						workspace data. SOC2 Type II compliance coming soon.
+						Your privacy and payments are protected. Nexus AI uses end-to-end encryption for your transactions and communications. We ensure that every host and property is thoroughly vetted.
 					</p>
 					<ul className="space-y-4">
 						<li className="flex items-center gap-3 text-lg font-medium">
@@ -29,13 +27,13 @@ export function SecuritySection() {
 							<div className="bg-primary/10 p-2 rounded-full">
 								<Server className="h-5 w-5 text-primary" />
 							</div>{" "}
-							Private isolated databases
+							Secure Payment Gateway
 						</li>
 						<li className="flex items-center gap-3 text-lg font-medium">
 							<div className="bg-primary/10 p-2 rounded-full">
 								<Key className="h-5 w-5 text-primary" />
 							</div>{" "}
-							SSO & SAML support (Pro)
+							Verified Host Profiles
 						</li>
 					</ul>
 				</div>
