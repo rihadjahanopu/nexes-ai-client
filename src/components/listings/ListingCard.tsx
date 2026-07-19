@@ -84,6 +84,11 @@ export function ListingCard({ listing }: { listing: ListingType }) {
               <span className="truncate">{listing.location}</span>
             </div>
           )}
+          {listing.date && (
+            <div className="text-[10px] uppercase font-semibold text-muted-foreground/70 tracking-wider">
+              Listed on {listing.date}
+            </div>
+          )}
           <OwnerBadge owner={listing.owner} />
         </div>
       </CardContent>

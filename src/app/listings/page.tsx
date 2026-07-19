@@ -39,6 +39,7 @@ export default function ExplorePage() {
             id: item._id,
             description: item.shortDescription,
             owner: item.owner,
+            date: item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : undefined,
           }));
           setAllListings(mappedItems);
         }

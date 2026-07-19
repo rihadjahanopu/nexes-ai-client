@@ -47,6 +47,7 @@ interface ItemDetail {
   specs?: Spec[];
   reviews?: Review[];
   owner?: { name: string; avatar?: string };
+  createdAt?: string;
 }
 
 // Reusable avatar component
@@ -251,6 +252,11 @@ export default function ListingDetailsPage() {
               {item.category && (
                 <span className="bg-primary/10 text-primary text-xs font-semibold px-2.5 py-1 rounded-full">
                   {item.category}
+                </span>
+              )}
+              {item.createdAt && (
+                <span className="text-muted-foreground">
+                  • Listed on {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                 </span>
               )}
             </div>
