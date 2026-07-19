@@ -10,6 +10,8 @@ import Image from 'next/image';
 import { useConfirm } from '@/components/ui/ConfirmDialog';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Edit2 } from 'lucide-react';
 
 interface Item {
   id: string;
@@ -26,6 +28,7 @@ export default function ManageItemsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const confirm = useConfirm();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchMyItems = async () => {
@@ -75,7 +78,11 @@ export default function ManageItemsPage() {
   };
 
   const handleView = (id: string) => {
-    toast.success(`Viewing item ${id}`);
+    router.push(`/listings/${id}`);
+  };
+
+  const handleEdit = (id: string) => {
+    router.push(`/items/edit/${id}`);
   };
 
   return (
@@ -181,6 +188,9 @@ export default function ManageItemsPage() {
                           <Button variant="ghost" size="sm" onClick={() => handleView(item.id)} className="h-8 px-3 hover:bg-primary/10 hover:text-primary">
                             <Eye className="w-4 h-4 mr-1.5" /> View
                           </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleEdit(item.id)} className="h-8 px-3 hover:bg-blue-500/10 hover:text-blue-500">
+                            <Edit2 className="w-4 h-4 mr-1.5" /> Edit
+                          </Button>
                           <Button variant="ghost" size="sm" onClick={() => handleDelete(item.id)} className="h-8 px-3 text-destructive hover:bg-destructive/10 hover:text-destructive">
                             <Trash2 className="w-4 h-4 mr-1.5" /> Delete
                           </Button>
@@ -243,9 +253,12 @@ export default function ManageItemsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex border-t pt-4 gap-3">
+                <div className="flex border-t pt-4 gap-2">
                   <Button variant="outline" size="sm" className="flex-1 h-10" onClick={() => handleView(item.id)}>
                     <Eye className="w-4 h-4 mr-2" /> View
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-1 h-10 text-blue-500 hover:bg-blue-500/10 border-blue-500/20" onClick={() => handleEdit(item.id)}>
+                    <Edit2 className="w-4 h-4 mr-2" /> Edit
                   </Button>
                   <Button variant="outline" size="sm" className="flex-1 h-10 text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20" onClick={() => handleDelete(item.id)}>
                     <Trash2 className="w-4 h-4 mr-2" /> Delete
