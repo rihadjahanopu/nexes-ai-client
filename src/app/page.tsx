@@ -15,6 +15,7 @@ import { StatisticsSection } from "@/components/home/StatisticsSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { ListingSection } from "@/components/listings/ListingSection";
 
 export default function Home() {
 	return (
@@ -22,6 +23,9 @@ export default function Home() {
 			<Navbar />
 			<main className="flex-1">
 				<HeroSection />
+				<div className="container mx-auto px-4">
+					<ListingSection />
+				</div>
 				<LogosSection />
 				<FeaturesSection />
 				<HowItWorksSection />

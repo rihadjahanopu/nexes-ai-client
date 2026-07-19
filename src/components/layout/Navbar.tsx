@@ -61,18 +61,20 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Nav Links */}
+          {/* Nav Links - Desktop */}
           <div className="hidden lg:flex gap-5 items-center absolute left-1/2 -translate-x-1/2 whitespace-nowrap">
-            <Link href="/#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Features</Link>
-            <Link href="/#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">How it Works</Link>
-            <Link href="/#testimonials" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Testimonials</Link>
-            <Link href="/#faq" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">FAQ</Link>
+            <Link href="/listings" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Explore</Link>
+            <Link href="/about" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">About</Link>
+            <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Blog</Link>
+            <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Contact</Link>
             
             {user && (
               <>
                 <div className="w-px h-4 bg-border/50 hidden xl:block mx-1" />
                 <Link href="/dashboard" className="text-sm font-medium text-primary hover:text-blue-500 transition-colors">Dashboard</Link>
                 <Link href="/projects" className="text-sm font-medium text-primary hover:text-blue-500 transition-colors">Projects</Link>
+                <Link href="/items/manage" className="text-sm font-medium text-primary hover:text-blue-500 transition-colors">Manage Items</Link>
+                <Link href="/items/add" className="text-sm font-medium text-primary hover:text-blue-500 transition-colors">Add Item</Link>
               </>
             )}
           </div>
@@ -134,6 +136,8 @@ export function Navbar() {
 
                       <div className="py-2 px-1">
                         <DropdownItem href="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />} label="Dashboard" onClick={() => setDropdownOpen(false)} />
+                        <DropdownItem href="/items/manage" icon={<Settings className="h-4 w-4" />} label="Manage Items" onClick={() => setDropdownOpen(false)} />
+                        <DropdownItem href="/items/add" icon={<Settings className="h-4 w-4" />} label="Add Item" onClick={() => setDropdownOpen(false)} />
                         <DropdownItem href="/profile" icon={<Settings className="h-4 w-4" />} label="Profile Settings" onClick={() => setDropdownOpen(false)} />
                       </div>
 
@@ -183,15 +187,17 @@ export function Navbar() {
               transition={{ duration: 0.2 }}
               className="lg:hidden absolute top-full left-0 w-full mt-3 p-4 bg-background/95 backdrop-blur-2xl border border-border/50 rounded-3xl shadow-2xl flex flex-col gap-2 origin-top"
             >
-              <Link href="/#features" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors break-words">Features</Link>
-              <Link href="/#how-it-works" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors break-words">How it Works</Link>
-              <Link href="/#testimonials" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors break-words">Testimonials</Link>
-              <Link href="/#faq" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors break-words">FAQ</Link>
+              <Link href="/listings" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors break-words">Explore Stays</Link>
+              <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors break-words">About</Link>
+              <Link href="/blog" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors break-words">Blog</Link>
+              <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors break-words">Contact</Link>
               
               {user && (
                 <>
                   <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors text-primary break-words">Dashboard</Link>
                   <Link href="/projects" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors text-primary break-words">Projects</Link>
+                  <Link href="/items/manage" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors text-primary break-words">Manage Items</Link>
+                  <Link href="/items/add" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-primary/10 text-sm font-medium transition-colors text-primary break-words">Add Item</Link>
                 </>
               )}
 

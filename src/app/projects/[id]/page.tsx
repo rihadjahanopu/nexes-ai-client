@@ -9,7 +9,7 @@ import api from '@/lib/axios';
 import { useParams } from 'next/navigation';
 import { 
   Loader2, Send, FileText, UploadCloud, Edit2, Trash2, 
-  Save, X, Eraser, Bot, Clock, AlertTriangle
+  Save, X, Eraser, Bot, Clock, AlertTriangle, Download
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -143,6 +143,19 @@ export default function ProjectDetailPage() {
     } finally {
       setDeletingMsgId(null);
     }
+  };
+
+  const handleDownloadMessage = (content: string, role: string) => {
+    const blob = new Blob([content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nexus-generated-${role}-${Date.now()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success('Downloaded successfully!');
   };
 
   useEffect(() => {
@@ -480,22 +493,34 @@ export default function ProjectDetailPage() {
                     </span>
                   </div>
                   
-                  {/* Delete Message Button */}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`h-6 px-2 text-xs opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10 ${
+                  {/* Message Actions */}
+                  <div className={`flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity ${
                       msg.role === 'user' ? 'self-end' : 'self-start'
-                    }`}
-                    onClick={() => handleDeleteMessage(msg._id, i)}
-                    disabled={deletingMsgId === msg._id}
-                  >
-                    {deletingMsgId === msg._id ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <><Trash2 className="h-3 w-3 mr-1" /> Delete</>
+                    }`}>
+                    {msg.role === 'model' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-xs text-muted-foreground hover:text-primary hover:bg-primary/10"
+                        onClick={() => handleDownloadMessage(msg.content, msg.role)}
+                      >
+                        <Download className="h-3 w-3 mr-1" /> Download
+                      </Button>
                     )}
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => handleDeleteMessage(msg._id, i)}
+                      disabled={deletingMsgId === msg._id}
+                    >
+                      {deletingMsgId === msg._id ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <><Trash2 className="h-3 w-3 mr-1" /> Delete</>
+                      )}
+                    </Button>
+                  </div>
                 </div>
                 {msg.role === 'user' && (
                   <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-1 text-primary text-xs font-bold">
