@@ -160,11 +160,6 @@ export default function EditItemPage() {
       toast.error('Please fill in all required fields.');
       return;
     }
-    if (imagePreviews.length === 0) {
-      toast.error('Please upload at least one image.');
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       const filteredSpecs = specs.filter(s => s.label.trim() && s.value.trim());
