@@ -23,8 +23,8 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleDemoLogin = async () => {
-    setEmail('demo@example.com');
-    setPassword('password123');
+    setEmail('itrihad@gmail.com');
+    setPassword('12345678');
     // Actual login will happen if user clicks login, or we can submit it right here
   };
 
@@ -122,20 +122,32 @@ export default function LoginPage() {
                   </Button>
                 </form>
                 <div className="mt-6 flex flex-col gap-4">
-                  <Button type="button" variant="secondary" className="w-full h-12 font-medium" onClick={handleDemoLogin}>
-                    Use Demo Credentials
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="w-full h-12 font-medium border-primary/20 hover:bg-primary/10 transition-colors" 
+                      onClick={handleDemoLogin}
+                    >
+                      Use Demo Credentials
+                    </Button>
+                  </motion.div>
                   <div className="relative my-2">
                     <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t border-border" />
+                      <span className="w-full border-t border-border/50" />
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase font-medium">
-                      <span className="bg-background px-4 text-muted-foreground">
+                    <div className="relative flex justify-center text-xs uppercase font-medium tracking-wider">
+                      <span className="bg-background/80 backdrop-blur-sm px-4 text-muted-foreground">
                         Or continue with
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-center w-full bg-background rounded-md shadow-sm border overflow-hidden">
+                  <motion.div 
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    className="flex justify-center w-full bg-background rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.02)] border border-border/60 hover:border-primary/40 overflow-hidden transition-all duration-300 relative group p-0.5"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                     <GoogleLogin
                       onSuccess={async (credentialResponse) => {
                         try {
@@ -157,7 +169,7 @@ export default function LoginPage() {
                       shape="rectangular"
                       size="large"
                     />
-                  </div>
+                  </motion.div>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-center pb-6">
