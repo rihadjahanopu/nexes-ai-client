@@ -15,6 +15,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import api from '@/lib/axios';
 import { useAuth } from '@/contexts/AuthContext';
+import { PrivateRoute } from '@/components/ui/PrivateRoute';
 import toast from 'react-hot-toast';
 
 interface Review {
@@ -194,8 +195,7 @@ export default function ListingDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Navbar />
+      <div className="fixed inset-0 bg-background flex items-center justify-center">
         <Loader2 className="animate-spin h-10 w-10 text-primary" />
       </div>
     );
@@ -217,6 +217,7 @@ export default function ListingDetailsPage() {
   const reviews = item.reviews || [];
 
   return (
+    <PrivateRoute>
     <div className="min-h-screen bg-background">
       <Navbar />
 
@@ -501,5 +502,6 @@ export default function ListingDetailsPage() {
 
       </main>
     </div>
+    </PrivateRoute>
   );
 }

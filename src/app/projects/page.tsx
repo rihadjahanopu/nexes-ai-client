@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Search, Filter, Plus, Calendar, Activity } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
+import { PrivateRoute } from '@/components/ui/PrivateRoute';
 
 export default function ProjectsListingPage() {
   const [projects, setProjects] = useState([]);
@@ -44,6 +45,7 @@ export default function ProjectsListingPage() {
   }, [page, debouncedSearch, status]);
 
   return (
+    <PrivateRoute>
     <div className="min-h-screen bg-muted/20">
       <Navbar />
       
@@ -173,5 +175,6 @@ export default function ProjectsListingPage() {
         )}
       </div>
     </div>
+    </PrivateRoute>
   );
 }

@@ -4,8 +4,21 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export function HeroSection() {
+	const { user } = useAuth();
+	const router = useRouter();
+
+	const handleAiChatClick = () => {
+		if (!user) {
+			router.push('/login?redirect=/projects');
+		} else {
+			router.push('/projects');
+		}
+	};
+
 	return (
 		<section className="relative overflow-hidden isolate min-h-[90vh] flex flex-col items-center justify-center pt-32 sm:pt-40 pb-20 w-full">
 			<motion.div 
@@ -36,16 +49,13 @@ export function HeroSection() {
 							Explore Stays <ArrowRight className="ml-2 h-5 w-5" />
 						</Button>
 					</Link>
-					<Link
-						href="/projects"
-						className="w-full sm:w-auto">
-						<Button
-							size="lg"
-							variant="outline"
-							className="w-full sm:w-auto h-12 sm:h-14 px-8 text-base sm:text-lg rounded-full bg-background/50 backdrop-blur hover:bg-muted">
-							AI Chat
-						</Button>
-					</Link>
+					<Button
+						size="lg"
+						variant="outline"
+						onClick={handleAiChatClick}
+						className="w-full sm:w-auto h-12 sm:h-14 px-8 text-base sm:text-lg rounded-full bg-background/50 backdrop-blur hover:bg-muted">
+						AI Chat
+					</Button>
 				</div>
 			</motion.div>
 

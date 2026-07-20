@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from 'react-hot-toast';
+import { PageLoader } from '@/components/ui/PageLoader';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ConfirmDialogProvider } from '@/components/ui/ConfirmDialog';
@@ -20,6 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <ConfirmDialogProvider>
               {children}
             </ConfirmDialogProvider>
+            <PageLoader />
             <Toaster position="top-right" />
           </AuthProvider>
         </QueryClientProvider>
